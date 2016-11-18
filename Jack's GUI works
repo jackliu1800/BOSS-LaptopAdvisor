@@ -21,9 +21,9 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 	//RadioButton setup fields
 	JLabel[] radioButtonTitleArray = new JLabel[2];
 
-	JButton[] budgetRadioButton = new JButton[2];
-	JButton[] screenSizeRadioButton = new JButton[2];
-	JButton[] weightRadioButton = new JButton[2];
+	JButton[] budgetRadioButton = new JButton[3];
+	JButton[] screenSizeRadioButton = new JButton[3];
+	JRadioButton[] brandRadioButton = new JRadioButton[9];
 
 
 	//
@@ -32,11 +32,11 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 	User user = new User();
 
 	//frame and frame menu elements
-	JMenu menu = new JMenu("Menu");
 	JMenuBar menuBar = new JMenuBar();
-	JMenuItem userMenuItem = new JMenuItem();
-	JMenuItem reportMenuItem = new JMenuItem();
-
+	JMenu mnMenu = new JMenu("Menu");
+	JMenuItem mntmUserPanel = new JMenuItem("User Panel");
+	JMenuItem mntmReportPanel = new JMenuItem("Report Panel");
+	JMenuItem mntmExit = new JMenuItem("Exit");
 
 	//user panel and user panel elements
 	JPanel userPanel = new JPanel();//frame
@@ -44,20 +44,37 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 
 
 
-	//elements to fill the weightings array - labels and comboboxes
+	//elements to fill the weightings array - labels and comboboxes	
+	JLabel[] WeightingLabelArray = new JLabel[6];
+
+	JComboBox[] ratingComboBox = new JComboBox[6];
 
 	//create report button
 	JButton createReportButton = new JButton("Create Report");//Create report button
 
 	//report panel and report panel elements
 	JPanel reportPanel = new JPanel ();
-
+	JButton[] laptopimageButton = new JButton[2];  
+	JTextArea[] textArea = new JTextArea[2];
 
 	//list of laptops
+	ImageIcon[] laptopImage = new ImageIcon[30];
+	JButton[] laptopImageButton = new JButton[30];
+	ArrayList[] scoreimageIndex = new ArrayList[30];
 
+	//condition check boolean and ints
+	//budgets
+	boolean below500;
+	boolean fivehundredto1000;
+	boolean above1000;
+	//check screensize condition
+	boolean under12;
+	boolean twelveto16;
+	boolean above17;
 
 	//list of the index of top 3 laptops
-
+	int index = 0;
+	int scoreIndex[] = new int [2];//0 highest, 1 second highest, 2 third highes
 
 	/*shivani's frame setup
 	 * 
@@ -74,19 +91,29 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 		//1. set size and layout
 		setSize(1600, 900);
 		setLayout(null);
-		setVisible(true);
 
 		//2. Create menu
 
 
-		menu.addActionListener(this);
-		userMenuItem.addActionListener(this);
-		reportMenuItem.addActionListener(this);
+		//add menuBar to frame
+		setJMenuBar(menuBar);
+		//add menu to menuBar
+		menuBar.add(mnMenu);
+		//add useritem to menu
+		mntmUserPanel.setIcon(new ImageIcon(getClass().getResource("users (1).png")));
+		mnMenu.add(mntmUserPanel);
+		//add reportitem to menu		
+		mntmReportPanel.setIcon(new ImageIcon(getClass().getResource("analytics (1).png")));
+		mnMenu.add(mntmReportPanel);
+		//add exititem to menu		
+		mntmExit.setIcon(new ImageIcon(getClass().getResource("exit.png")));
+		mnMenu.add(mntmExit);
 
 
 
 
 		//4. Make the frame visible
+		setVisible(true);
 
 	}
 
@@ -143,6 +170,9 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 
 
 
+
+
+
 	/*
 	 * This method sets up the radio buttons
 	 *
@@ -150,42 +180,80 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 	 */
 	private void setupRadioButtons() {
 
+		//budgetRadioButton names
+		radioButtonTitleArray[0] = new JLabel("Budget");
 
-		radioButtonTitleArray[0].setName("Budget");
-		radioButtonTitleArray[1].setName("Screen Size");
-		radioButtonTitleArray[2].setName("Weight");
+		budgetRadioButton[0].setName("Doesn't matter");
+		budgetRadioButton[1].setName("Below $500");
+		budgetRadioButton[2].setName("$500 to $1000");
+		budgetRadioButton[3].setName("Above %1000");
+
+		//screensizeRadioButton names
+		radioButtonTitleArray[1] = new JLabel("Screen Size");
+
+		screenSizeRadioButton[0].setName("Doesn't matter");
+		screenSizeRadioButton[1].setName("Below 12 inches");
+		screenSizeRadioButton[2].setName("13 to 16 inches");
+		screenSizeRadioButton[3].setName("Above 17 inches");
+
+		//brandRadioButton names
+		radioButtonTitleArray[2] = new JLabel("Brand");
 
 
+		//0 doesnt matter, 1 acer, 2 apple 3 asus, 4 dell, 5 HP, 6,Lenovo
+		//7 MSI, 7 samsun, 8,sansun 9 toshiba, 10 eluktronics
 
+		brandRadioButton[0].setName("Doesn't matter");
+		brandRadioButton[1].setName("Acer");
+		brandRadioButton[2].setName("Apple");
+		brandRadioButton[3].setName("Asus");
+		brandRadioButton[4].setName("Dell");
+		brandRadioButton[5].setName("HP");
+		brandRadioButton[6].setName("Lenovo");
+		brandRadioButton[7].setName("MSI");
+		brandRadioButton[8].setName("Samsung");
+		brandRadioButton[9].setName("Toshiba");
+		brandRadioButton[10].setName("Eluktronics");
 
 		for(int i = 0; i < 3; i++){
 
 			//setup title of button groups
 			userPanel.add(radioButtonTitleArray[i]);
-
 			//x,y,width,height
 			radioButtonTitleArray[i].setBounds(i+1*300, 800, 200, 100);
+
+			//place screensize and budget and brand radiobuttons
 			if(i == 0){
 				//place budget
-				for (int c = 0; c < 3; c++){
+				for (int c = 0; c < 4; c++){
 					userPanel.add(budgetRadioButton[c]);
-					budgetRadioButton[c].setBounds(radioButtonTitleArray[i].getX(), 700-c*100, 200, 100);
+					budgetRadioButton[c].setBounds(radioButtonTitleArray[i].getX(), 700-c*30, 127, 25);
 					budgetRadioButton[c].addActionListener(this);
 				}
 
 			} else if(i == 1){
 				//place screen size
-				for (int c = 0; c < 3; c++){
+				for (int c = 0; c < 4; c++){
 					userPanel.add(screenSizeRadioButton[c]);
-					screenSizeRadioButton[c].setBounds(radioButtonTitleArray[i].getX(), 700-c*100, 200, 100);
+					screenSizeRadioButton[c].setBounds(radioButtonTitleArray[i].getX(), 700-c*30, 127, 25);
 					screenSizeRadioButton[c].addActionListener(this);
 				}
 			} else if(i == 2){
-
-				for (int c = 0; c < 3; c++){
-					userPanel.add(weightRadioButton[c]);
-					weightRadioButton[c].setBounds(radioButtonTitleArray[i].getX(), 700-c*100, 200, 100);
-					weightRadioButton[c].addActionListener(this);
+				//place brands first 4 in one row(0123
+				for (int c = 0; c < 4; c++){
+					userPanel.add(brandRadioButton[c]);
+					brandRadioButton[c].setBounds(radioButtonTitleArray[i].getX(), 700-c*30, 127, 25);
+					brandRadioButton[c].addActionListener(this);
+				}// second 3 brands in second row(456
+				for (int c = 4; c < 8; c++){
+					userPanel.add(brandRadioButton[c]);
+					brandRadioButton[c].setBounds(radioButtonTitleArray[i].getX()+100, 700-c*30, 127, 25);
+					brandRadioButton[c].addActionListener(this);
+				}// last 3 brands in last row(789
+				for (int c = 8; c < 11; c++){
+					userPanel.add(brandRadioButton[c]);
+					brandRadioButton[c].setBounds(radioButtonTitleArray[i].getX()+200, 700-c*30, 127, 25);
+					brandRadioButton[c].addActionListener(this);
 				}
 			}
 
@@ -216,17 +284,21 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 
 
 		//3. For loop to display 3 laptop Winners
-		for (int laptop = 0; laptop < 3; laptop++)
+		for (int i = 0; i < 3; i++){
 			System.out.println();
 
-		JButton button = new JButton();     		//3.1 Create a new button  
-		button.setBounds(250, 300, 300, 150 );	//3.2 Set bounds for the button
-		button.addActionListener(this);	//3.3 Add action listener to the button
-		reportPanel.add(button);     		//3.4 add button to report panel
+			//3.1 Create a new button  
+			laptopimageButton[i].setBounds(12+i*300, 60, 302, 190 );	//3.2 Set bounds for the button
+			laptopimageButton[i].addActionListener(this);	//3.3 Add action listener to the button
+			reportPanel.add(laptopimageButton[i]);     		//3.4 add button to report panel
 
-		JTextArea textarea = new JTextArea();       	//3.5 create a new text area
-		textarea.setBounds(0,0,500,500 ); 			//3.6 set bounds for text area
-		reportPanel.add(textarea);		//3.7 add text area to the r.p.
+			//3.5 create a new text area
+
+
+			textArea[i].setBounds(12+i*300, 250, 302, 190);	//3.6 set bounds for text area
+			textArea[i].setBackground(Color.LIGHT_GRAY);
+			reportPanel.add(textArea[i]);				//3.7 add text area to the r.p.
+		}
 
 	}
 
@@ -245,12 +317,12 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 		//check if desktop supports web browsing
 		if ( Desktop.isDesktopSupported() ){
 			try{
-				Desktop.getDesktop().browse(new URI(laptopArray[scoreIndex[index]].getHyperLink()));
+				Desktop.getDesktop().browse(new URI(laptopArray[scoreIndex[index]].getHyperlink()));
 				//if I/O error exists print to error stream
 			}catch ( IOException e ){
 				e.printStackTrace();
 				//if hyperlink doesn't exist print to error stream
-			}catch ( URISyntaxException ){
+			}catch ( URISyntaxException e){
 				e.printStackTrace();
 			}
 		}
@@ -279,24 +351,35 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 
 		//array of laptop images
 
-		ImageIcon[] laptopImage = new ImageIcon[30];
-		JButton[] laptopImageButton = new JButton[30];
-		ArrayList[] scoreIndex = new ArrayList[30];
+
+		//textarea placements
+
+
+
+		JTextArea twoTextArea = new JTextArea();
+		JTextArea threeTextArea = new JTextArea();
 
 		//top 3
 		for (int i = 1; i < 31; i++ ) {
-			
+
 			laptopImage[i] = new ImageIcon("laptop" + (i) + ".jpg");
 			laptopImageButton[i].setIcon(new ImageIcon(new ImageIcon("./images/laptop" + 
 					scoreIndex[i] + ".jpg").getImage().getScaledInstance(450, 400, 0)));
+		}
 
-			//write csv file to textarea
-			//to do it setText(toString(
-			try {
-				setText(laptoptoString())
+		//write csv file to textarea
+		//to do it setText(toString(
+		try {
+
+
+			for (int i = 0; i < 3; i++){
+
+				//place the textAreas and put on words	
+
+				textArea[i].setText(laptopArray[scoreIndex[i]].toString());
 			}
 
-			textField.setText(lines);
+
 
 		}
 		catch (FileNotFoundException ex) {
@@ -304,248 +387,362 @@ public class LaptopAdvisorGUI extends JFrame implements ActionListener{
 		}
 		catch (IOException ex) {
 			System.out.println("IOException");
-		}
-	}
-
-
-
-
-/**
- * rank laptops - Akila
- */
-private void rankLapTop(){
-
-	int index = 0;
-	int scoreIndex[] = new int [2];//0 highest, 1 second highest, 2 third highes
-	
-	//initiallize
-	for (int i = 0; i < 3; i++){
-		scoreIndex[i] = 0;
-	}
-	
-	for (Laptop currentLaptop : laptopArray) {
-		
-
-		laptopArray[index].setScore(wdm(currentLaptop, user));
-
-
-		//biggest, everything move down
-		if (laptopArray[index].getScore() > scoreIndex[0]) {
-			scoreIndex[2] = scoreIndex[1];
-			scoreIndex[1] = scoreIndex[0];
-			scoreIndex[0] = index;
-
-		//second big, 1 
-		} else if (laptopArray[index].getScore() > scoreIndex[1]) {
-			scoreIndex[2] = scoreIndex[1];
-			scoreIndex[1] = index;
 		} 
-		
-		else if (laptopArray[index].getScore() > scoreIndex[2]) {
-			scoreIndex[2] = index;
-		}
-		index++;
 	}
 
-}
 
-/**
- * Weighted Decision Matrix - Akila  
- */
-private int wdm ( Laptop currentlaptop, User user ){
-	//loop amounts of laptop
-	
+
+
+
+	/**
+	 * rank laptops - Akila
+	 */
+	private void rankLapTop(){
+
+
+
+		//initiallize
+		for (int i = 0; i < 3; i++){
+			scoreIndex[i] = 0;
+		}
+
+		for (Laptop currentLaptop : laptopArray) {
+
+			//give everything a score
+			laptopArray[index].setScore(wdm(currentLaptop, user));
+
+			laptopArray[index].setScore(conditionCheck(currentLaptop));
+			//biggest, everything move down
+			if (laptopArray[index].getScore() >= laptopArray[scoreIndex[0]].getScore()) {
+				scoreIndex[2] = scoreIndex[1];
+				scoreIndex[1] = scoreIndex[0];
+				scoreIndex[0] = index;
+
+				//second big, 1 
+			} else if (laptopArray[index].getScore() >= laptopArray[scoreIndex[1]].getScore()) {
+				scoreIndex[2] = scoreIndex[1];
+				scoreIndex[1] = index;
+			} 
+
+			else if (laptopArray[index].getScore() >= laptopArray[scoreIndex[2]].getScore()) {
+				scoreIndex[2] = index;
+			}
+			index++;
+		}
+
+	}
+
+	/**
+	 * Weighted Decision Matrix - Akila  
+	 */
+	private int wdm ( Laptop currentlaptop, User user ){
+		//loop amounts of laptop
+
 		int score = 0;
 
 		//loop numbers of Weighting
 		for (int i = 0; i < 4; i++){
 			score += user.getUserWeighting()[i] * currentlaptop.getRating()[i];
 		}
-		
+
 		return score;
 	}
 
 
-}
+	//0 doesnt matter, 1 acer, 2 apple 3 asus, 4 dell, 5 HP, 6,Lenovo
+	//7 MSI, 7 samsun, 8,sansun 9 toshiba, 10 eluktronics
+	private void setBrandRating(int choice) {
 
-/*
- * This method handles all the actions that may occur on the GUI - menus, radio buttons, combo 
- * boxes, report button, laptop image buttons
- *
- * author - Jack
- */
-public void actionPerformed(ActionEvent event) {
-
-	if(event.getSource() == userMenuItem){
-		userPanel.setVisible(true);
-		reportPanel.setVisible(false);
-	}
-
-	else if(event.getSource() == userMenuItem){
-		userPanel.setVisible(true);
-		reportPanel.setVisible(false);
-	}
-
-
-	else if(event.getSource() == budgetRadioButton){
-		for(int i = 0; i < 3; i++){
-			if(event.getSource() == budgetRadioButton[i])
-				user.setBudgetRating(i);
-		}		
-	}
-
-	else if(event.getSource() == screenSizeRadioButton){
-		for(int i = 0; i < 3; i++){
-			if(event.getSource() == screenSizeRadioButton[i])
-				user.setScreensizeRating(i);	 ;
-		}		
-	}
-
-	else if(event.getSource() == weightRadioButton){
-		for(int i = 0; i < 3; i++){
-			if(event.getSource() == weightRadioButton[i])
-				user.setWeightRating(i);
-		}		
-	}
-
-
-	else if(event.getSource() == cpuComboBox){
-
-		cpuComboBox.getSelectedIndex;
-		for(int i = 0; i < 10; i++){	
-
-			if(event.getSource() == cpuComboBox[i])
-				user.setCpuRating(i);
-		}	
-	}
-
-	else if(event.getSource() == gpuComboBox){
-
-		gpuComboBox.getSelectedIndex;
-		for(int i = 0; i < 10; i++){
-
-			if(event.getSource() == gpuComboBox[i])
-				user.setGpuRating(i);	
-		}	
-	}
-
-	else if(event.getSource() == ramComboBox){
-
-		ramComboBox.getSelectedIndex;
-		for(int i = 0; i < 10; i++){
-
-			if(event.getSource() == ramComboBox[i])
-				user.setRamRating(i);
-		}	
-	}
-
-
-	else if(event.getSource() == reportButton){
-
-		createReport();
-
-	}
-
-	else if(event.getSource() == hyperlinksArray){
-		for(int i = 0; i < 3; i++){
-			if (event.getSource() == hyperlinksArray[i]);
-			openWebBrowser(i);
+		for (int i = 0; i < 11; i++){
+			if (choice == i )
+				user.setUserbrand(i);
 		}
 
-	}
-
-
-}
-
-
-
-
-
-
-private void setBudgetrating() {
-
-	int choice = 0;
-	int index;
-
-
-	(int choice)
-
-
-	If (choice == 0 ) {
-		If (user[index].getprice() < 500 )
-		laptopArray[index].getRatings()[0] = 5;
-
-
-		else if (choice == 1)
-			(laptopArray[index].getprice() 500 - 1000 )
-			laptopArray[index].getRatings()[1] = 10;
-
-
-		else if (choice == 2)
-			(laptopArray[index].getprice() 1000+ )
-			laptopArray[index].getRatings()[2] = 5;
-
 
 	}
 
+	private void setBugetRating (int choice){
 
-}
-
-
-
+		//check budget condition
 
 
+		if (choice == 0 ) {
+			below500 = false;
+			fivehundredto1000= false;
+			above1000= false;
+		}
+		else if (choice == 1){
+			below500 = true;
 
 
-private void setScreenSizeRating (int choice){
-
-
-	int choice = 0;
-	int index;
+		}else if (choice == 2){
+			fivehundredto1000 = true;
 
 
 
+		} else if (choice == 3)
+			above1000 =true;
 
 
-	if (choice == 0 ) {
-		if (laptopArray[index].getprice() < 500 )
-			laptopArray[index].getRatings()[Small] = 0;
+	}	
+
+
+
+
+
+	//if the laptop doesn't meet user's budget/screensize/brand  chioces, it is automatically scored zero
+	private int conditionCheck (Laptop currentlaptop){
+
+		//return score
+		int score = currentlaptop.getScore();
+
+
+
+		//check budget condition
+		if(below500 == true){
+			if (currentlaptop.getPrice() >= 500)	{
+				score = 0;
+			}
+		} else if (fivehundredto1000 == true){
+			if (currentlaptop.getPrice() <= 500 && currentlaptop.getPrice() >= 1000 )	{
+				score = 0;
+			}
+		} else if (above1000 == true){
+			if (currentlaptop.getPrice() <= 1000 )	{
+				score = 0;
+			}
+		}
+
+
+
+		if(under12 == true){
+			if (currentlaptop.getDimensionAndResolution() >= 12){
+				score = 0;
+			}
+		} else if (twelveto16 == true){
+			if (currentlaptop.getDimensionAndResolution() <= 12 && currentlaptop.getDimensionAndResolution() >= 16){
+				score = 0;
+			}
+		} else if (above17 == true){
+			if (currentlaptop.getDimensionAndResolution() <= 17){
+				score = 0;
+			}
+		}
+
+
+		//0 doesnt matter, 1 acer, 2 apple 3 asus, 4 dell, 5 HP, 6,Lenovo
+		//7 MSI, 7 samsun, 8,sansun 9 toshiba, 10 eluktronics
+		for(int b = 0; b < 9; b++){
+			if(b == user.getUserbrand()){
+				if (currentlaptop.getBrand().toString().equals(brandRadioButton.toString()) ){
+					return score;
+				} else {
+					score = 0;
+					return score;
+				}
+
+			}
+		}
+		return score;
+
+	}		
+
+	private void setScreenSizeRating (int choice){
+
+		//check screensize condition
+		//boolean under12;
+		//boolean twelveto16;
+		//boolean above17;
+
+
+
+
+		if (choice == 0 ) {
+			under12 = false;
+			twelveto16 = false;
+			above17 = false;
+		}
+		else if (choice == 1){
+			under12 = true;
+
+		}else if (choice == 2){
+			twelveto16 = true;
+
+
+		} else if (choice == 3)
+			above17 =true;
+
+	}	
+	/*
+	 * This method handles all the actions that may occur on the GUI - menus, radio buttons, combo 
+	 * boxes, report button, laptop image buttons
+	 *
+	 * author - Jack
+	 */
+	public void actionPerformed(ActionEvent event) {
+
+
+		if(event.getSource() == mntmUserPanel){
+			userPanel.setVisible(true);
+			reportPanel.setVisible(false);
+		}
+
+		else if(event.getSource() == mntmReportPanel){
+			userPanel.setVisible(false);
+			reportPanel.setVisible(true);
+		}
+
+
+		else if(event.getSource() == budgetRadioButton){
+			for(int i = 0; i < 3; i++){
+				if(event.getSource() == budgetRadioButton[i])
+					setBugetRating(i);
+			}		
+		}
+
+		else if(event.getSource() == screenSizeRadioButton){
+			for(int i = 0; i < 3; i++){
+				if(event.getSource() == screenSizeRadioButton[i])
+					setScreenSizeRating(i);	 ;
+			}		
+		}
+
+		else if(event.getSource() == brandRadioButton){
+			for(int i = 0; i < 11; i++){
+				if(event.getSource() == brandRadioButton[i])
+					setBrandRating(i);
+			}		
+		}
+
+		//rating of a combo box
+		else if(event.getSource() == ratingComboBox){
+
+			for(int i = 0; i < 7; i++){	
+
+				if(event.getSource() == ratingComboBox[i]){
+
+					for(int choice = 0; choice < 11; choice++)
+						if (ratingComboBox[i].getSelectedItem().toString().equals(choice))
+							user.getUserWeighting()[i] = choice;
+				}
+
+			}	
+		}
+
+
+
+		else if(event.getSource() == createReportButton){
+
+			createReport();
+
+		}
+
+		else if(event.getSource() == laptopImageButton){
+			for(int i = 0; i < 3; i++){
+				if (event.getSource() == laptopImageButton[i]);
+				openWebBrowser(i);
+			}
+
+		}
+
 
 	}
-	else if (choice == 1)
-		//(laptopArray[index].getprice() 500 - 1000 )
-		laptopArray[index].getRatings()[Medium] = 5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	private void setupWeightings( ){
+
+
+		//0 CPU RATE, 1 RAM RATE, 2 Storage Rate, 3 Storage speed Rate, 4 GPU Rate
+		//5 Battery Rate, 6 Weight rate
+
+
+
+		// 1. create the Label (add text)
+		WeightingLabelArray[0] = new JLabel("What CPU Rating would you prefer?");
+
+
+		WeightingLabelArray[1] = new JLabel ("How much would you prefer the memory to be?");
+
+
+		WeightingLabelArray[2] = new JLabel ("How do you think storage space is important?");
+
+
+		WeightingLabelArray[3] = new JLabel ("How significant you think the speed of the storage is?");
+
+
+		WeightingLabelArray[4] = new JLabel ("What GPU Rating would you prefer?");
+
+
+		WeightingLabelArray[5] = new JLabel ("How long should the battery life be?");
+
+
+		WeightingLabelArray[6] = new JLabel ("What laptop weight would be prefered?");
+
+
+
+
+		// 2. Set up the Labels/Combo boxes
+		for(int i = 0; i < 7; i++){
+
+
+			WeightingLabelArray[i].setBounds(120*i+100, 502, 1600, 800);
+			userPanel.add(WeightingLabelArray[i]);
+
+			ratingComboBox[i].setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}));
+			ratingComboBox[i].setBounds(120*i+100, 302, 72, 22);
+			userPanel.add(ratingComboBox[i]);
+			ratingComboBox[i].addActionListener(this);
+
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
-else if (choice == 2)
-	//(laptopArray[index].getprice() 1000+ )
-	laptopArray[index].getRatings()[Large] = 10;
-
-
-}
-
-
-}
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-}
 
 
 
